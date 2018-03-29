@@ -1,1 +1,2 @@
-cfg.json
+*config.py
+/__pycache__/
