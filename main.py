@@ -2,6 +2,8 @@ import bot_config
 import sys
 import time
 import telepot
+import requests
+import json
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -13,14 +15,14 @@ def intiKeyboard(msg):
 
     keyboard = InlineKeyboardMarkup(inline_keyboard = [
                     [
-                        InlineKeyboardButton(text='Bitcoin', callback_data='btc'),
-                        InlineKeyboardButton(text='Ethereum', callback_data='eth'),
-                        InlineKeyboardButton(text='Ripple', callback_data='rpx')
+                        InlineKeyboardButton(text='Bitcoin', callback_data='BTC'),
+                        InlineKeyboardButton(text='Ethereum', callback_data='ETH'),
+                        InlineKeyboardButton(text='Ripple', callback_data='RPX')
                     ],
                     [
-                        InlineKeyboardButton(text='Stellar', callback_data='mlx'),
-                        InlineKeyboardButton(text='Bitcoin', callback_data='btc'),
-                        InlineKeyboardButton(text='Bitcoin', callback_data='btc')
+                        InlineKeyboardButton(text='Stellar', callback_data='MLX'),
+                        InlineKeyboardButton(text='Bitcoin', callback_data='BTC'),
+                        InlineKeyboardButton(text='Bitcoin', callback_data='BTC')
                     ]
                 ]
     )
@@ -33,14 +35,14 @@ def printCoinsKeyboard(msg):
 
     keyboard = InlineKeyboardMarkup(inline_keyboard = [
                     [
-                        InlineKeyboardButton(text='Bitcoin', callback_data='btc'),
-                        InlineKeyboardButton(text='Ethereum', callback_data='eth'),
-                        InlineKeyboardButton(text='Ripple', callback_data='rpx')
+                        InlineKeyboardButton(text='Bitcoin', callback_data='BTC'),
+                        InlineKeyboardButton(text='Ethereum', callback_data='ETH'),
+                        InlineKeyboardButton(text='Ripple', callback_data='RPX')
                     ],
                     [
-                        InlineKeyboardButton(text='Stellar', callback_data='mlx'),
-                        InlineKeyboardButton(text='Bitcoin', callback_data='btc'),
-                        InlineKeyboardButton(text='Bitcoin', callback_data='btc')
+                        InlineKeyboardButton(text='Stellar', callback_data='MLX'),
+                        InlineKeyboardButton(text='Bitcoin', callback_data='BTC'),
+                        InlineKeyboardButton(text='Bitcoin', callback_data='BTC')
                     ]
                 ]
     )
@@ -54,9 +56,20 @@ def printCryptoValue(msg):
     query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
     print(query_data)
 
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='<- Back', callback_data='back')],])
+    data = requests.get('https://min-api.cryptocompare.com/data/price?fsym=' + query_data + '&tsyms=USD,EUR')
 
-    bot.editMessageText((msg['from']['id'], msg['message']['message_id']), 'VALOR', reply_markup=keyboard)
+    if data.status_code == 200:
+        data = data.json()
+        print(data)
+
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='<- Back', callback_data='back')],])
+
+        text = '*' + str(data['USD']) + '*' + ' USD' + '\n' +  '*' + str(data['EUR']) + '*' + ' EUR'
+
+        bot.editMessageText((msg['from']['id'], msg['message']['message_id']), text, reply_markup=keyboard, parse_mode='Markdown')
+
+    else:
+        bot.answerCallbackQuery(query_id, text='An error ocurred. Please, try again later.')
 
 
 
