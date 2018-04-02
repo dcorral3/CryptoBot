@@ -20,19 +20,21 @@ client = MongoClient(
 db = client[auth.authSource]
 
 coins = [
-            { 'name': 'Bitcoin', 'shortName': 'BTC'},
-            { 'name': 'Ethereum', 'shortName': 'ETH'},
-            { 'name': 'Ripple', 'shortName': 'XRP'},
-            { 'name': 'BiCash', 'shortName': 'BCH'},
-            { 'name': 'Litecoin', 'shortName': 'LTC'},
-            { 'name': 'EOS', 'shortName': 'EOS'},
-            { 'name': 'Cardano', 'shortName': 'ADA'},
-            { 'name': 'Stellar', 'shortName': 'XLM'},
-            { 'name': 'NEO', 'shortName': 'NEO'},
-            { 'name': 'IOTA', 'shortName': 'MIOTA'}
+            { '_id': 0, 'name': 'Bitcoin', 'shortName': 'BTC'},
+            { '_id': 1, 'name': 'Ethereum', 'shortName': 'ETH'},
+            { '_id': 2, 'name': 'Ripple', 'shortName': 'XRP'},
+            { '_id': 3, 'name': 'BiCash', 'shortName': 'BCH'},
+            { '_id': 4, 'name': 'Litecoin', 'shortName': 'LTC'},
+            { '_id': 5, 'name': 'EOS', 'shortName': 'EOS'},
+            { '_id': 6, 'name': 'Cardano', 'shortName': 'ADA'},
+            { '_id': 7, 'name': 'Stellar', 'shortName': 'XLM'},
+            { '_id': 8, 'name': 'NEO', 'shortName': 'NEO'},
+            { '_id': 9, 'name': 'IOTA', 'shortName': 'MIOTA'}
         ]
-
-db.coins.insert_many(coins)
+try:
+    db.coins.insert(coins)
+except:
+    pass
 
 def getCointKeyboard():
     inline_key = []
