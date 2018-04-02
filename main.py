@@ -39,8 +39,11 @@ except:
 def getCointKeyboard():
     inline_key = []
     coinsCollection = db.coins.find()
-    for coin in coinsCollection:
-        inline_key.append([InlineKeyboardButton(text=coin['name'],callback_data=coin['shortName'])])
+    for i in range(0, coinsCollection.count(), 2):
+        inline_key.append([
+            InlineKeyboardButton(text=str(i+1)+'. '+coinsCollection[i]['name'],callback_data=coinsCollection[i]['shortName']),
+            InlineKeyboardButton(text=str(i+2)+'. '+coinsCollection[i+1]['name'],callback_data=coinsCollection[i+1]['shortName'])
+            ])
     return InlineKeyboardMarkup(inline_keyboard=inline_key)
 
 def intiKeyboard(msg):
