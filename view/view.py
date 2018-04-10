@@ -20,7 +20,7 @@ def keyBoardGenerator(columns = 1, cursor = None):
                 raw_buttons.append(
                             InlineKeyboardButton(
                                 text=cursor[i+c]['name'],
-                                callback_data=cursor[i+c]['shortName']
+                                callback_data=cursor[i+c]['symbol']
                             )
                         )
             inline_key.append(raw_buttons)
@@ -51,5 +51,9 @@ def coinMainView(coin, bot, msg):
             )
 
 def helpView(bot, chat_id):
-    bot.sendMessage(chat_id, 'HELP?')
+    bot.sendMessage(
+            chat_id,
+            'Send me the /start command '
+            'or use the screen keyboard to navigate through your options'
+            )
 
