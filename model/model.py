@@ -1,3 +1,4 @@
+from datetime import datetime
 import requests
 import conf.db_config as auth
 import pymongo
@@ -32,8 +33,8 @@ class model:
         finally:
             self.coinList = self.db.coins.find()
 
-    def urlGenerator(self, coinName):
-        return "https://min-api.cryptocompare.com/data/price?fsym="+ coinName +"&tsyms=USD,EUR"
+    def urlGenerator(self, symbol):
+        return "https://min-api.cryptocompare.com/data/pricemultifull?fsyms="+symbol+"&tsyms=USD"
 
     def getCoinList(self):
         return self.coinList
@@ -42,9 +43,16 @@ class model:
         coinObj = self.db.coins.find_one({'symbol': symbol})
         url = self.urlGenerator(symbol)
         req = requests.get(url)
+        data = req.json()
         if req.status_code == 200 and coinObj:
-            value = req.json()['USD']
-            coin = {'name': coinObj['name'],'value': str(value)}
+            value = data['RAW'][symbol]['USD']['PRICE']
+            update_time=datetime.fromtimestamp(
+                    data['RAW'][symbol]['USD']['LASTUPDATE']
+                    ).strftime("%H:%M:%S")
+            coin = {'name': coinObj['name'],
+                    'symbol': symbol,
+                    'value': str(value),
+                    'time': update_time}
         else:
             coin = None
         return coin

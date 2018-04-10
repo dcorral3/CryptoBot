@@ -2,12 +2,16 @@ import telepot
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 import pymongo
 
-def coinMainKeyboard():
-    inline_key = [[InlineKeyboardButton(text='<-Back', callback_data='back')]]
+def coinMainKeyboard(symbol):
+    print(symbol)
+    inline_key = [
+                [InlineKeyboardButton(text='update', callback_data=str(symbol)),
+                InlineKeyboardButton(text='<-Back', callback_data='back')]
+            ]
     return InlineKeyboardMarkup(inline_keyboard=inline_key)
 
 def coinMainTxt(coin):
-    return coin['name'] + '\n' + coin['value'] + ' USD'
+    return coin['name']+ ': ' + '     ' + coin['value'] + ' USD\n' + coin['time']
 
 def keyBoardGenerator(columns = 1, cursor = None):
     inline_key = []
@@ -42,7 +46,7 @@ def coinListView(coinCursor, bot, msg, start=None):
                 )
 
 def coinMainView(coin, bot, msg):
-    keyboard = coinMainKeyboard()
+    keyboard = coinMainKeyboard(coin['symbol'])
     text = coinMainTxt(coin)
     bot.editMessageText(
             (msg['from']['id'], msg['message']['message_id']),
