@@ -47,12 +47,14 @@ def coinListView(coinCursor, bot, msg, start=None):
 
 def coinMainView(coin, bot, msg):
     keyboard = coinMainKeyboard(coin['symbol'])
-    text = coinMainTxt(coin)
-    bot.editMessageText(
-            (msg['from']['id'], msg['message']['message_id']),
-            text,
-            reply_markup=keyboard
-            )
+    newText = coinMainTxt(coin)
+    
+    if msg['message']['text'] != newText:
+        bot.editMessageText(
+                (msg['from']['id'], msg['message']['message_id']),
+                newText,
+                reply_markup=keyboard
+                )
 
 def helpView(bot, chat_id):
     bot.sendMessage(
@@ -60,4 +62,3 @@ def helpView(bot, chat_id):
             'Send me the /start command '
             'or use the screen keyboard to navigate through your options'
             )
-

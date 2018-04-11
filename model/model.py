@@ -5,7 +5,7 @@ import pymongo
 from pymongo import MongoClient
 import json
 
-class model:
+class Model:
     coins = [
               { '_id': 0, 'name': 'Bitcoin', 'symbol': 'BTC'},
               { '_id': 1, 'name': 'Ethereum', 'symbol': 'ETH'},
@@ -29,7 +29,7 @@ class model:
         try:
             self.db.coins.insert(self.coins)
         except:
-            pass
+            print("ERROR AL INSERTAR EN LA BD")
         finally:
             self.coinList = self.db.coins.find()
 

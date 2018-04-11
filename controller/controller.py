@@ -1,14 +1,15 @@
-from model.model import model
+from model.model import Model
 import view.view as view
 import telepot
 print("loading controller...")
 class Controller:
     def __init__(self, bot=None):
         self.bot=bot
-        self.model=model()
+        self.model=Model()
 
     def handler(self, msg):
         flav = telepot.flavor(msg)
+        
         if flav is 'chat':
             self.__chatCmd(msg)
         elif flav is 'callback_query':
@@ -32,4 +33,3 @@ class Controller:
         else:
             coin = self.model.getCoin(data)
             view.coinMainView(coin, self.bot, msg)
-
