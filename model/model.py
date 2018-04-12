@@ -28,8 +28,8 @@ class Model:
                 )[auth.authSource]
         try:
             self.db.coins.insert(self.coins)
-        except:
-            print("ERROR AL INSERTAR EN LA BD")
+        except Exception as e:
+            print("DB Error: ", str(e))
         finally:
             self.coinList = self.db.coins.find()
 
