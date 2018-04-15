@@ -9,7 +9,7 @@ class Controller:
 
     def handler(self, msg):
         flav = telepot.flavor(msg)
-        
+
         if flav is 'chat':
             self.__chatCmd(msg)
         elif flav is 'callback_query':
@@ -18,18 +18,36 @@ class Controller:
         else:
             print("Default")
 
+
+
+    #control commands in chat
+
     def __chatCmd(self, msg):
+
         if 'start' in msg['text']:
             coins = self.model.getCoinList()
             view.coinListView(coins, self.bot, msg, True)
-        else:
+
+        elif 'help' in msg['text']:
             view.helpView(self.bot, msg['chat']['id'])
 
+        else: #default
+            view.helpView(self.bot, msg['chat']['id'])
+
+
+
+
+    #control callbacks
+
     def __callbackQueryCmd(self, msg):
+
         data = msg['data']
+
         if 'back' in data:
             coins = self.model.getCoinList()
             view.coinListView(coins, self.bot, msg)
-        else:
-            coin = self.model.getCoin(data)
+
+        elif 'coin' in data: #coin button callback
+            coinData = data.split()
+            coin = self.model.getCoin(coinData[1])
             view.coinMainView(coin, self.bot, msg)
