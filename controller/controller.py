@@ -24,11 +24,15 @@ class Controller:
 
     def __chatCmd(self, msg):
 
-        if 'start' in msg['text']:
+        if '/start' == msg['text']:
+            coins = self.model.getCoinList()
+            view.coinListView(coins, self.bot, msg, True)
+            
+        elif '/top10' == msg['text']:
             coins = self.model.getCoinList()
             view.coinListView(coins, self.bot, msg, True)
 
-        elif 'help' in msg['text']:
+        elif '/help' in msg['text']:
             view.helpView(self.bot, msg['chat']['id'])
 
         else: #default
