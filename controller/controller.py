@@ -1,44 +1,37 @@
 from model.model import Model
+from .commandHandler import CommandHandler
 import view.view as view
 import telepot
+from telepot.routing import (lower_key, by_chat_command, make_routing_table)
+
 print("loading controller...")
 class Controller:
+
     def __init__(self, bot=None):
         self.bot=bot
         self.model=Model()
+
+        command_handler = CommandHandler(self.bot, self.model)
+        self.command_router = telepot.helper.Router(lower_key(by_chat_command()),
+                                           make_routing_table(command_handler, [
+                                               'start',
+                                               'top10',
+                                               'help',
+                                               (None, command_handler.on_invalid_command),
+                                           ]))
+
+        self.bot._router.routing_table['chat'] = self.command_router.route
 
     def handler(self, msg):
         flav = telepot.flavor(msg)
 
         if flav is 'chat':
-            self.__chatCmd(msg)
+            self.command_router.route(msg)
         elif flav is 'callback_query':
             self.__callbackQueryCmd(msg)
             self.bot.answerCallbackQuery(msg['id'])
         else:
             print("Default")
-
-
-
-    #control commands in chat
-
-    def __chatCmd(self, msg):
-
-        if '/start' == msg['text']:
-            coins = self.model.getCoinList()
-            view.coinListView(coins, self.bot, msg, True)
-            
-        elif '/top10' == msg['text']:
-            coins = self.model.getCoinList()
-            view.coinListView(coins, self.bot, msg, True)
-
-        elif '/help' in msg['text']:
-            view.helpView(self.bot, msg['chat']['id'])
-
-        else: #default
-            view.helpView(self.bot, msg['chat']['id'])
-
-
 
 
     #control callbacks
