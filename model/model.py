@@ -6,20 +6,13 @@ from pymongo import MongoClient
 import json
 
 class Model:
-    coins = [
-              { '_id': 0, 'name': 'Bitcoin', 'symbol': 'BTC'},
-              { '_id': 1, 'name': 'Ethereum', 'symbol': 'ETH'},
-              { '_id': 2, 'name': 'Ripple', 'symbol': 'XRP'},
-              { '_id': 3, 'name': 'BiCash', 'symbol': 'BCH'},
-              { '_id': 4, 'name': 'Litecoin', 'symbol': 'LTC'},
-              { '_id': 5, 'name': 'EOS', 'symbol': 'EOS'},
-              { '_id': 6, 'name': 'Cardano', 'symbol': 'ADA'},
-              { '_id': 7, 'name': 'Stellar', 'symbol': 'XLM'},
-              { '_id': 8, 'name': 'NEO', 'symbol': 'NEO'},
-              { '_id': 9, 'name': 'IOTA', 'symbol': 'IOT'}
-          ]
+
+    coins = requests.get("https://api.coinmarketcap.com/v1/ticker/?limit=10").json()
 
     def __init__(self):
+
+        self.coins = self.cleanJson()
+
         self.db = MongoClient(
                 host = auth.host,
                 username = auth.username,
@@ -33,20 +26,35 @@ class Model:
         finally:
             self.coinList = self.db.coins.find()
 
+    def cleanJson(self):
+        coinList = []
+
+        for coin in self.coins:
+            my_dict = {}
+            my_dict['_id'] = coin['id']
+            my_dict['name'] = coin['name']
+            my_dict['symbol'] = coin['symbol']
+            coinList.append(my_dict)
+
+        return coinList
+
+
     def urlGenerator(self, symbol):
-        return "https://min-api.cryptocompare.com/data/pricemultifull?fsyms="+symbol+"&tsyms=USD"
+        if symbol == 'MIOTA':
+            symbol = 'IOT'
+        return "https://min-api.cryptocompare.com/data/pricemultifull?fsyms="+symbol+"&tsyms=USD", symbol
 
     def getCoinList(self):
         return self.coinList
 
     def getCoin(self, symbol):
         coinObj = self.db.coins.find_one({'symbol': symbol})
-        url = self.urlGenerator(symbol)
+        url, symbol = self.urlGenerator(symbol)
         req = requests.get(url)
         data = req.json()
         if req.status_code == 200 and coinObj:
             value = data['RAW'][symbol]['USD']['PRICE']
-            update_time=datetime.fromtimestamp(
+            update_time = datetime.fromtimestamp(
                     data['RAW'][symbol]['USD']['LASTUPDATE']
                     ).strftime("%H:%M:%S")
             coin = {'name': coinObj['name'],

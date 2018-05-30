@@ -4,7 +4,7 @@ from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 def coinMainKeyboard(symbol):
     print(symbol)
     inline_key = [
-                [InlineKeyboardButton(text='update', callback_data=str(symbol)),
+                [InlineKeyboardButton(text='update', callback_data='coin ' + str(symbol)),
                 InlineKeyboardButton(text='<-Back', callback_data='back')]
             ]
     return InlineKeyboardMarkup(inline_keyboard=inline_key)
@@ -23,7 +23,7 @@ def keyBoardGenerator(columns = 1, cursor = None):
                 raw_buttons.append(
                             InlineKeyboardButton(
                                 text=cursor[i+c]['name'],
-                                callback_data=cursor[i+c]['symbol']
+                                callback_data='coin ' + cursor[i+c]['symbol']
                             )
                         )
             inline_key.append(raw_buttons)
@@ -47,7 +47,7 @@ def coinListView(coinCursor, bot, msg, start=None):
 def coinMainView(coin, bot, msg):
     keyboard = coinMainKeyboard(coin['symbol'])
     newText = coinMainTxt(coin)
-    
+
     if msg['message']['text'] != newText:
         bot.editMessageText(
                 (msg['from']['id'], msg['message']['message_id']),

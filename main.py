@@ -7,7 +7,7 @@ from telepot.loop import MessageLoop
 bot = telepot.Bot(bot_config.token)
 c = Controller(bot)
 
-MessageLoop(bot,c.handler).run_as_thread()
+MessageLoop(bot, c.handler).run_as_thread()
 print ('Listening ...')
 
 while 1:
