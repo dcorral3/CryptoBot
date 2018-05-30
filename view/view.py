@@ -1,6 +1,5 @@
 import telepot
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
-import pymongo
 
 def coinMainKeyboard(symbol):
     print(symbol)
